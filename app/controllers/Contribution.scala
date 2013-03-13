@@ -12,9 +12,9 @@ object Contribution {
   /*
    * Broadcast stream and channel creation
    * controlsStream: Enumerator, represents the output stream to be broadcasted
-   * controlsChannel: Channel, same broadcast channel, different format. Enables imperative style interactions
+   * broadcaster: Channel, same broadcast channel, different format. Enables imperative style interactions
    */
-  val (controlsStream, controlsChannel) = Concurrent.broadcast[JsValue]
+  val (enumerator, broadcaster) = Concurrent.broadcast[JsValue]
 
   /*
    * in: Incoming requests from uses
@@ -25,7 +25,19 @@ object Contribution {
         Enumeratee.map[JsObject] { o => o.validate[ControlCmd]  } &>>
         Iteratee.foreach(_.map(handleCmd))
 
-    (in, controlsStream)
+    (in, enumerator)
+  }
+
+  /* Same as above, but clearly spelled out */
+  def controls2 = WebSocket.using[JsValue] { implicit request =>
+    val e1:Enumeratee[JsValue,  JsObject] = Enumeratee.collect[JsValue] { case o:JsObject => o }
+    val e2:Enumeratee[JsObject, JsResult[ControlCmd]] = Enumeratee.map[JsObject] { o => o.validate[ControlCmd]  }
+    val e3:Enumeratee[JsValue,  JsResult[ControlCmd]] = e1 compose e2 // === e1 ><> e2
+
+    val e4:Iteratee[JsResult[ControlCmd], Unit] = Iteratee.foreach(_.map(handleCmd))
+    val e5:Iteratee[JsValue,              Unit] = e3 transform e4 // === as e3 &>> e4
+
+    (e5, enumerator)
   }
 
   def handleCmd(cmd: ControlCmd) {
@@ -42,6 +54,6 @@ object Contribution {
     contributors = contributors + cmd.by
 
     // dispatches out that the command was handled
-    controlsChannel push Json.toJson(cmd)
+    broadcaster push Json.toJson(cmd)
   }
 }

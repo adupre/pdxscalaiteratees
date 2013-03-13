@@ -1,49 +1,12 @@
 @()(implicit request: RequestHeader)
-<html>
-    <!DOCTYPE html>
-    <meta charset="utf-8">
-    <style>
 
-    svg {
-        font: 10px sans-serif;
-    }
-
-    .change {
-        fill: none;
-        stroke: gray;
-        stroke-width: 2px;
-        stroke-opacity: 0.3;
-    }
-
-    .line {
-        fill: none;
-        stroke: #000;
-        stroke-width: 3px;
-    }
-
-    .axis path, .axis line {
-        fill: none;
-        stroke: #000;
-        shape-rendering: crispEdges;
-    }
-
-    input[type='text'].variable {
-        width: 30px;
-    }
-    </style>
-    <body>
-
-    <script src="http://d3js.org/d3.v3.min.js"></script>
-    <script src="assets/javascripts/jquery-1.7.1.min.js"></script>
-    <script src="assets/javascripts/main.js"></script>
+@equation {
     <script>
         var controls = connect("@routes.Contribution.controls().webSocketURL()");
     </script>
 
     <form>
         y = <input class="variable" id="a" type="text" value="@(models.Equation.a)" onchange="controls.sendUpdate(this)"/>.cos(<input class="variable" id="b" type="text" value="@(models.Equation.b)" onchange="controls.sendUpdate(this)"/>.x&sup2;) + <input class="variable" id="c" type="text" value="@(models.Equation.c)" onchange="controls.sendUpdate(this)"/>.sin(<input class="variable" id="d" type="text" value="@(models.Equation.d)" onchange="controls.sendUpdate(this)"/>.x) <br/><br/>
-
         name: <input id="name" type="text" value="anonymous"/><br/>
     </form>
-    </body>
-</html>
+}

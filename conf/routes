@@ -4,11 +4,15 @@
 
 # Home page
 GET     /                           controllers.Application.index
+GET     /equation                   controllers.Application.equation
 GET     /stream                     controllers.EquationExecutor.stream
+GET     /stream2                    controllers.EquationExecutor.stream2
 GET     /controls                   controllers.Contribution.controls
 
-GET     /example1                   controllers.Examples.example1
-GET     /example2                   controllers.Examples.example1
+GET     /example1                   controllers.Example1.index
+GET     /example2                   controllers.Example2.index
+GET     /example3                   controllers.Example3.index
+GET     /example4                   controllers.Example4.index
 
 
 # Map static resources from the /public folder to the /assets URL path

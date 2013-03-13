@@ -6,4 +6,7 @@ object Application extends Controller {
   def index = Action { implicit request =>
     Ok(views.html.index())
   }
+  def equation = Action { implicit request =>
+    Ok(views.html.equation())
+  }
 }
